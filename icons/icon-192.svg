@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="hillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bgGrad)"/>
+  <circle cx="370" cy="150" r="54" fill="url(#sunGrad)"/>
+  <path d="M0 380 Q 150 260 300 320 T 512 300 L 512 512 L 0 512 Z" fill="#166534" opacity="0.6"/>
+  <path d="M0 410 Q 180 320 340 370 T 512 360 L 512 512 L 0 512 Z" fill="url(#hillGrad)"/>
+  <g transform="translate(140, 160) scale(0.9)">
+    <rect x="30" y="30" width="160" height="190" rx="36" fill="#ffffff" filter="drop-shadow(0 10px 15px rgba(0,0,0,0.2))"/>
+    <rect x="48" y="55" width="124" height="65" rx="14" fill="#0284c7"/>
+    <circle cx="65" cy="165" r="14" fill="#facc15"/>
+    <circle cx="155" cy="165" r="14" fill="#facc15"/>
+    <rect x="95" y="158" width="30" height="12" rx="6" fill="#94a3b8"/>
+    <rect x="42" y="215" width="28" height="20" rx="8" fill="#1e293b"/>
+    <rect x="150" y="215" width="28" height="20" rx="8" fill="#1e293b"/>
+  </g>
+  <path d="M60 460 L452 460" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.4"/>
+</svg>

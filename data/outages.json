@@ -1,0 +1,31 @@
+{
+  "updatedAt": "2026-11-24T15:00:00+01:00",
+  "town": "Wrząsowice",
+  "commune": "Świątniki Górne",
+  "power": {
+    "provider": "Tauron Dystrybucja",
+    "status": "OK",
+    "headline": "Sieć elektroenergetyczna stabilna",
+    "message": "Brak zgłoszonych awarii i planowanych wyłączeń prądu dla Wrząsowic.",
+    "emergencyPhone": "991",
+    "plannedOutages": [],
+    "emergencyOutages": []
+  },
+  "water": {
+    "provider": "ZGK Świątniki Górne",
+    "status": "OK",
+    "headline": "Sieć wodociągowa pracuje normalnie",
+    "message": "Brak przerw w dostawie wody i planowanego płukania sieci we Wrząsowicach. Woda zdatna do spożycia.",
+    "phone": "12 270 40 30",
+    "emergencyPhone": "606 720 033",
+    "announcements": []
+  },
+  "gas": {
+    "provider": "Polska Spółka Gazownictwa (PSG)",
+    "status": "OK",
+    "headline": "Dostawy gazu bez zakłóceń",
+    "message": "Brak aktywnych przerw w dostawie gazu i prac na gazociągu w rejonie Wrząsowic.",
+    "emergencyPhone": "992",
+    "outages": []
+  }
+}

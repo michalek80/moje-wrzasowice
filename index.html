@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+  <title>Moje Wrząsowice - Informator Mieszkańca</title>
+  <meta name="description" content="Lokalny informator mieszkańców Wrząsowic: pogoda na żywo, wywóz odpadów, rozkłady jazdy MPK Kraków, telefony alarmowe i akcja zima.">
+  <meta name="theme-color" content="#0284c7">
+  
+  <!-- PWA & Apple Web App -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Wrząsowice">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- NAGŁÓWEK -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <img src="icons/icon-192.svg" alt="Herb Wrząsowic">
+        </div>
+        <div>
+          <h1 class="brand-title">Moje Wrząsowice</h1>
+          <div class="brand-subtitle" id="header-date">Ładowanie daty...</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-install-pwa" class="header-btn" title="Zainstaluj jako aplikację w telefonie">
+          <span>📲</span> <span>Zainstaluj</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- GŁÓWNA ZAWARTOŚĆ TABÓW -->
+    <main class="app-main">
+      
+      <!-- ============================================== -->
+      <!-- TAB 1: EKRAN GŁÓWNY (PULPIT)                   -->
+      <!-- ============================================== -->
+      <section id="tab-home" class="tab-pane active">
+        
+        <!-- 1. WIDGET ROZKŁADU MPK (ULUBIONY PRZYSTANEK) -->
+        <div class="card widget-bus" id="bus-widget-container">
+          <div class="widget-bus-top">
+            <span class="widget-stop-badge">🚏 Najbliższy autobus</span>
+            <button class="widget-change-btn" id="btn-open-fav-modal" title="Zmień wybrany przystanek">
+              ⚙️ Zmień przystanek
+            </button>
+          </div>
+          
+          <div class="widget-stop-name" id="widget-stop-name">Wrząsowice Centrum</div>
+          <div class="widget-direction" id="widget-stop-dir">Kierunek: Borek Fałęcki (Kraków)</div>
+
+          <div class="widget-departure-box">
+            <div class="widget-time-main">
+              <span class="widget-big-time" id="widget-time">--:--</span>
+              <span class="widget-countdown" id="widget-countdown">Sprawdzam...</span>
+            </div>
+            <div class="widget-next-departures" id="widget-next-list">
+              Kolejne: ładowanie...
+            </div>
+          </div>
+
+          <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; opacity: 0.85;">
+            <span id="widget-line-badge">Linia 215</span>
+            <a href="javascript:void(0)" id="link-goto-mpk-tab" style="color: #ffffff; text-decoration: underline; font-weight: 600;">
+              Zobacz pełny rozkład ➔
+            </a>
+          </div>
+        </div>
+
+        <!-- 2. KARTA POGODY (OPEN-METEO) -->
+        <div class="card" id="weather-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🌤️</span>
+              <h2 class="card-title">Pogoda we Wrząsowicach</h2>
+            </div>
+            <span class="card-badge" id="weather-updated" style="background: #f1f5f9; color: #64748b; font-size: 11px;">
+              Na żywo
+            </span>
+          </div>
+
+          <div class="weather-hero">
+            <div class="weather-temp-group">
+              <span class="weather-icon-big" id="weather-icon">⛅</span>
+              <div>
+                <div class="weather-temp"><span id="weather-temp">--</span>°C</div>
+                <div class="weather-desc-box">
+                  <div class="weather-desc" id="weather-desc">Pobieranie prognozy...</div>
+                  <div class="weather-feels">Odczuwalna: <span id="weather-feels">--</span>°C</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="weather-minmax">
+              <div>Maks: <span class="max" id="weather-max">--°</span></div>
+              <div>Min: <span class="min" id="weather-min">--°</span></div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                Wiatr: <span id="weather-wind">--</span> km/h
+              </div>
+            </div>
+          </div>
+
+          <!-- Jakość powietrza -->
+          <div class="air-quality-bar">
+            <div class="air-quality-left">
+              <span style="font-size: 15px;">🍃</span>
+              <div>
+                <div style="font-size: 12px; font-weight: 700;">Jakość powietrza: <span id="air-status">--</span></div>
+                <div class="air-quality-values">PM10: <b id="air-pm10">--</b> µg/m³ &nbsp;|&nbsp; PM2.5: <b id="air-pm25">--</b> µg/m³</div>
+              </div>
+            </div>
+            <span class="air-quality-badge" id="air-badge" style="background: #dcfce7; color: #16a34a;">Dobra</span>
+          </div>
+
+          <!-- Oś godzinowa -->
+          <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-muted);">
+            Prognoza godzinowa na dziś:
+          </div>
+          <div class="weather-hourly" id="weather-hourly-container">
+            <div style="font-size: 12px; color: #94a3b8; padding: 10px;">Ładowanie osi godzinowej...</div>
+          </div>
+        </div>
+
+        <!-- 3. KARTA WYWOZU ŚMIECI -->
+        <div class="card" id="waste-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🚛</span>
+              <h2 class="card-title">Najbliższy wywóz odpadów</h2>
+            </div>
+            <button class="header-btn" id="btn-open-waste-tab" style="font-size: 11px; padding: 4px 8px;">
+              Wszystkie terminy
+            </button>
+          </div>
+
+          <div class="waste-banner" id="waste-banner" style="background: #fef3c7; border-color: #fde68a;">
+            <div class="waste-icon" id="waste-icon">🗑️</div>
+            <div class="waste-info">
+              <div class="waste-top-row">
+                <span class="waste-title" id="waste-title">Zmieszane + Bioodpady</span>
+                <span class="waste-countdown-pill" id="waste-countdown-pill" style="background: #f59e0b; color: #ffffff;">
+                  W ten poniedziałek
+                </span>
+              </div>
+              <div class="waste-date" id="waste-date">Ładowanie daty...</div>
+              <div class="waste-desc" id="waste-desc">
+                Czarne pojemniki (zmieszane) oraz brązowe worki (bio) + odpady zielone z ogrodu (maks. 3 worki).
+              </div>
+              <div class="waste-note">⚠️ Wystaw pojemniki i worki przed posesję do godz. 6:00 rano.</div>
+            </div>
+          </div>
+
+          <div id="waste-next-upcoming" style="font-size: 12px; color: var(--text-muted); padding: 4px 0;">
+            Kolejny odbiór: sprawdzanie...
+          </div>
+        </div>
+
+        <!-- 4. STATUS MEDIÓW (PRĄD, WODA, GAZ) NA ŻYWO -->
+        <div class="card" id="outage-home-card" style="margin-top: 16px;">
+          <div class="card-header" style="margin-bottom: 8px;">
+            <div class="card-title-group">
+              <span class="card-title-icon" id="outage-home-icon">⚡</span>
+              <h2 class="card-title" id="outage-home-title">Stan mediów we Wrząsowicach</h2>
+            </div>
+            <span class="card-badge" id="outage-home-badge" style="background: #dcfce7; color: #16a34a; font-size: 11px;">
+              Wszystko OK
+            </span>
+          </div>
+
+          <!-- Trzy wskaźniki: Prąd, Woda, Gaz -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px;">
+            <div id="media-pill-power" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 6px 4px; text-align: center;">
+              <div style="font-size: 15px;">⚡</div>
+              <div style="font-size: 11px; font-weight: 700; color: #166534;">Prąd</div>
+              <div style="font-size: 10px; color: #15803d;" id="media-status-power">OK</div>
+            </div>
+
+            <div id="media-pill-water" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 6px 4px; text-align: center;">
+              <div style="font-size: 15px;">💧</div>
+              <div style="font-size: 11px; font-weight: 700; color: #166534;">Woda</div>
+              <div style="font-size: 10px; color: #15803d;" id="media-status-water">OK</div>
+            </div>
+
+            <div id="media-pill-gas" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 6px 4px; text-align: center;">
+              <div style="font-size: 15px;">🔥</div>
+              <div style="font-size: 11px; font-weight: 700; color: #166534;">Gaz</div>
+              <div style="font-size: 10px; color: #15803d;" id="media-status-gas">OK</div>
+            </div>
+          </div>
+
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;" id="outage-home-desc">
+            Brak zgłoszonych awarii i przerw w dostawie prądu (Tauron), wody (ZGK) i gazu (PSG).
+          </div>
+
+          <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+            <span id="outage-home-time" style="color: var(--text-light);">Sprawdzono: przed chwilą</span>
+            <a href="javascript:void(0)" id="link-goto-outages" style="color: var(--primary); font-weight: 700; text-decoration: none;">
+              Komunikaty i zgłoszenia ➔
+            </a>
+          </div>
+        </div>
+
+        <!-- 5. KAFELKI SZYBKIEGO KONTAKTU -->
+        <div style="font-size: 14px; font-weight: 700; margin-top: 20px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+          Szybki dostęp
+        </div>
+        <div class="quick-grid">
+          <a href="tel:+48508115902" class="quick-btn">
+            <span class="quick-icon">❄️</span>
+            <div>
+              <div class="quick-label">Akcja Zima</div>
+              <div class="quick-sub">Odśnieżanie gminne</div>
+            </div>
+          </a>
+
+          <a href="tel:+48122700625,6" class="quick-btn">
+            <span class="quick-icon">🏥</span>
+            <div>
+              <div class="quick-label">Pomoc Nocna</div>
+              <div class="quick-sub">NiŚOZ Mogilany</div>
+            </div>
+          </a>
+
+          <a href="tel:+48122704030" class="quick-btn">
+            <span class="quick-icon">💧</span>
+            <div>
+              <div class="quick-label">Awarie ZGK</div>
+              <div class="quick-sub">Woda i kanalizacja</div>
+            </div>
+          </a>
+
+          <a href="tel:991" class="quick-btn">
+            <span class="quick-icon">⚡</span>
+            <div>
+              <div class="quick-label">Tauron Dystrybucja</div>
+              <div class="quick-sub">Awarie prądu (991)</div>
+            </div>
+          </a>
+        </div>
+
+      </section>
+
+
+      <!-- ============================================== -->
+      <!-- TAB 2: ROZKŁAD JAZDY MPK KRAKÓW                -->
+      <!-- ============================================== -->
+      <section id="tab-mpk" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🚌</span>
+              <h2 class="card-title">Rozkłady jazdy MPK Kraków</h2>
+            </div>
+            <span class="card-badge" style="background: #e0f2fe; color: #0369a1;">Strefa II</span>
+          </div>
+
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+            Oficjalne godziny odjazdów z przystanków we Wrząsowicach dla linii <b>215</b>, <b>225</b> i nocnej <b>915</b>.
+          </p>
+
+          <!-- Selektory -->
+          <div class="mpk-selectors">
+            <div>
+              <label class="form-label">Wybierz linię autobusową:</label>
+              <select id="mpk-line-select" class="custom-select">
+                <option value="215">Linia 215: Borek Fałęcki ⇄ Rzeszotary Panciawa</option>
+                <option value="225">Linia 225: Borek Fałęcki ⇄ Świątniki Górne UMiG</option>
+                <option value="915">Linia 915 (Nocna): Łagiewniki ⇄ Świątniki Górne</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label">Przystanek we Wrząsowicach:</label>
+              <select id="mpk-stop-select" class="custom-select"></select>
+            </div>
+
+            <div>
+              <label class="form-label">Kierunek jazdy:</label>
+              <select id="mpk-dir-select" class="custom-select"></select>
+            </div>
+
+            <!-- Typ dnia -->
+            <div>
+              <label class="form-label">Rozkład dla dnia:</label>
+              <div class="day-tabs">
+                <button class="day-tab-btn active" data-day="weekdays">Dzień powszedni</button>
+                <button class="day-tab-btn" data-day="saturday">Sobota</button>
+                <button class="day-tab-btn" data-day="sunday">Niedziela i święta</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Przycisk przypięcia do ekranu głównego -->
+          <button id="btn-pin-as-fav" class="btn-primary" style="background: #0284c7; margin-bottom: 14px;">
+            ★ Ustaw ten przystanek w widgecie na ekranie głównym
+          </button>
+
+          <!-- Tabela odjazdów -->
+          <div style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="font-size: 14px; font-weight: 700;">Wszystkie godziny odjazdów:</h3>
+              <span id="mpk-current-hint" style="font-size: 11px; color: #b45309; font-weight: 600;">
+                Żółty kolor = najbliższy kurs
+              </span>
+            </div>
+            <div class="timetable-grid" id="mpk-timetable-grid">
+              <!-- generowane dynamicznie -->
+            </div>
+          </div>
+
+          <!-- Linki do radarów na żywo -->
+          <div style="margin-top: 18px; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid var(--border-color);">
+            <div style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">🛰️ Śledzenie autobusów na żywo (GPS MPK):</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <a href="https://jakdojade.pl/krakow" target="_blank" rel="noopener" class="header-btn" style="text-decoration: none;">
+                🗺️ Jakdojade Kraków ↗
+              </a>
+              <a href="https://time4bus.com" target="_blank" rel="noopener" class="header-btn" style="text-decoration: none;">
+                📍 Time4BUS (Pozycja GPS) ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============================================== -->
+      <!-- TAB 3: HARMONOGRAM ODPADÓW                      -->
+      <!-- ============================================== -->
+      <section id="tab-waste" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🚛</span>
+              <h2 class="card-title">Gospodarka odpadami</h2>
+            </div>
+            <button class="header-btn" id="btn-edit-waste-schedule" style="font-size: 12px;">
+              ⚙️ Edytuj daty
+            </button>
+          </div>
+
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+            Harmonogram dla miejscowości Wrząsowice (Gmina Świątniki Górne). Wystawiaj odpady przed posesję do godz. 6:00 rano.
+          </p>
+
+          <!-- Nadchodzące odbiory -->
+          <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">Nadchodzące terminy wywozu:</h3>
+          <div id="waste-full-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- generowane przez JS -->
+          </div>
+
+          <!-- Zasady segregacji -->
+          <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 14px;">
+            <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Jak prawidłowo segregować we Wrząsowicach?</h3>
+            
+            <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+              <div style="font-weight: 700; color: #92400e; font-size: 14px;">1. Zmieszane + Bioodpady + Zielone</div>
+              <div style="font-size: 12px; color: #78350f; margin-top: 4px;">
+                Odbierane w tym samym dniu: pojemnik czarny (odpady resztkowe), brązowy worek (obierki, resztki jedzenia) oraz <b>odpady zielone z ogrodu (trawa, liście — limit do 3 worków)</b>.
+              </div>
+            </div>
+
+            <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+              <div style="font-weight: 700; color: #075985; font-size: 14px;">2. Wszystkie Segregowane Razem</div>
+              <div style="font-size: 12px; color: #0369a1; margin-top: 4px;">
+                Wszystkie frakcje surowcowe wystawiamy w jednym wspólnym terminie: żółte worki (tworzywa i metale), niebieskie worki (papier), zielone worki (szkło).
+              </div>
+            </div>
+
+            <div style="background: #f1f5f9; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px;">
+              <div style="font-weight: 700; font-size: 14px;">🏢 PSZOK Świątniki Górne</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                ul. Ekologiczna 16. Czynny w środy (10:00 - 18:00) i soboty (08:00 - 16:00). Przyjmuje wielkogabaryty, elektrośmieci, gruz i nadwyżki odpadów zielonych. Tel: 12 270 40 30.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============================================== -->
+      <!-- TAB 4: SOS, ZIMA I ZDROWIE                     -->
+      <!-- ============================================== -->
+      <section id="tab-contacts" class="tab-pane">
+        
+        <!-- Moduł Awarie i Wyłączenia Prądu (Tauron) -->
+        <div class="card" id="outages-detail-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">⚡</span>
+              <h2 class="card-title">Prąd (Tauron Dystrybucja)</h2>
+            </div>
+            <span class="card-badge" id="outages-tab-badge" style="background: #dcfce7; color: #16a34a;">
+              Sieć OK
+            </span>
+          </div>
+
+          <div id="outages-status-banner" style="padding: 12px; border-radius: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; margin-bottom: 14px;">
+            <div style="font-weight: 700; font-size: 14px; color: #166534;" id="outages-status-headline">
+              Brak planowanych prac i awarii
+            </div>
+            <div style="font-size: 12px; color: #15803d; margin-top: 4px;" id="outages-status-details">
+              Tauron Dystrybucja nie zgłasza obecnie wyłączeń zasilania we Wrząsowicach.
+            </div>
+          </div>
+
+          <!-- Wyszukiwarka po ulicach -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" style="font-size: 12px;">Sprawdź swoją ulicę we Wrząsowicach:</label>
+            <input type="text" id="outage-street-search" placeholder="Wpisz np. Nad Wilgą, Spacerowa, Pileckiego..." class="custom-select" style="font-size: 13px;">
+          </div>
+
+          <div id="outages-items-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- generowane dynamicznie -->
+          </div>
+
+          <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="https://www.tauron-dystrybucja.pl/wylaczenia" target="_blank" rel="noopener" class="header-btn" style="text-decoration: none;">
+              🗺️ Oficjalna mapa wyłączeń Tauron ↗
+            </a>
+            <a href="tel:991" class="header-btn" style="background: #fee2e2; color: #dc2626; text-decoration: none;">
+              📞 Pogotowie energetyczne (991)
+            </a>
+          </div>
+        </div>
+
+        <!-- Moduł Woda i Kanalizacja (ZGK Świątniki Górne) -->
+        <div class="card" id="water-detail-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">💧</span>
+              <h2 class="card-title">Woda i Kanalizacja (ZGK)</h2>
+            </div>
+            <span class="card-badge" id="water-tab-badge" style="background: #dcfce7; color: #16a34a;">
+              Sieć OK
+            </span>
+          </div>
+
+          <div id="water-status-banner" style="padding: 12px; border-radius: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; margin-bottom: 12px;">
+            <div style="font-weight: 700; font-size: 14px; color: #166534;" id="water-status-headline">
+              Dostawy wody bez zakłóceń
+            </div>
+            <div style="font-size: 12px; color: #15803d; margin-top: 4px;" id="water-status-details">
+              ZGK Świątniki Górne nie zgłasza przerw w dostawie wody ani płukania sieci we Wrząsowicach.
+            </div>
+          </div>
+
+          <div id="water-announcements-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;"></div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="tel:+48122704030" class="header-btn" style="text-decoration: none;">
+              📞 ZGK Centrala (12 270 40 30)
+            </a>
+            <a href="tel:+48606720033" class="header-btn" style="background: #fee2e2; color: #dc2626; text-decoration: none;">
+              🚨 Awaryjny ZGK (606 720 033)
+            </a>
+            <a href="https://www.swiatniki-gorne.pl" target="_blank" rel="noopener" class="header-btn" style="text-decoration: none;">
+              🌐 Komunikaty Gminy ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Moduł Sieć Gazowa (PSG) -->
+        <div class="card" id="gas-detail-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🔥</span>
+              <h2 class="card-title">Sieć Gazowa (PSG)</h2>
+            </div>
+            <span class="card-badge" id="gas-tab-badge" style="background: #dcfce7; color: #16a34a;">
+              Sieć OK
+            </span>
+          </div>
+
+          <div id="gas-status-banner" style="padding: 12px; border-radius: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; margin-bottom: 12px;">
+            <div style="font-weight: 700; font-size: 14px; color: #166534;" id="gas-status-headline">
+              Dostawy gazu prawidłowe
+            </div>
+            <div style="font-size: 12px; color: #15803d; margin-top: 4px;" id="gas-status-details">
+              Brak aktywnych prac sieciowych i przerw w dostawie gazu we Wrząsowicach.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="https://www.psgaz.pl/przerwy-w-dostawie-gazu" target="_blank" rel="noopener" class="header-btn" style="text-decoration: none;">
+              🗺️ Przerwy w PSG (Mapa) ↗
+            </a>
+            <a href="tel:992" class="header-btn" style="background: #fee2e2; color: #dc2626; text-decoration: none;">
+              🚨 Pogotowie Gazowe (992)
+            </a>
+          </div>
+        </div>
+
+        <!-- Akcja Zima -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">❄️</span>
+              <h2 class="card-title">Akcja Zima - Odśnieżanie</h2>
+            </div>
+            <span class="card-badge" style="background: #e0f2fe; color: #0369a1;">Całodobowo</span>
+          </div>
+          <div id="contacts-winter-list"></div>
+        </div>
+
+        <!-- Zdrowie i Apteki -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🏥</span>
+              <h2 class="card-title">Nocna Opieka i Apteki</h2>
+            </div>
+          </div>
+          <div id="contacts-health-list"></div>
+        </div>
+
+        <!-- Awarie i Urząd -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🛠️</span>
+              <h2 class="card-title">Awarie Mediów i Urząd</h2>
+            </div>
+          </div>
+          <div id="contacts-utilities-list"></div>
+        </div>
+
+        <!-- Alarmowe -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🚨</span>
+              <h2 class="card-title">Numery Alarmowe</h2>
+            </div>
+          </div>
+          <div id="contacts-emergency-list"></div>
+        </div>
+
+      </section>
+
+
+      <!-- ============================================== -->
+      <!-- TAB 5: WIEŚ, STARA SZKOŁA I KULTURA            -->
+      <!-- ============================================== -->
+      <section id="tab-culture" class="tab-pane">
+        
+        <!-- Stara Szkoła -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">🏛️</span>
+              <h2 class="card-title">Stara Szkoła we Wrząsowicach</h2>
+            </div>
+            <span class="card-badge" style="background: #fef3c7; color: #92400e;">Filia CK</span>
+          </div>
+
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+            Centrum Kultury we Wrząsowicach (ul. Pileckiego 3). Harmonogram cotygodniowych zajęć:
+          </p>
+
+          <div id="culture-activities-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Msze Święte -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-title-icon">⛪</span>
+              <h2 class="card-title">Msze Święte w Okolicy</h2>
+            </div>
+          </div>
+          <div id="culture-churches-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- DOLNY PASEK NAWIGACJI -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-tab="tab-home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Pulpit</span>
+      </button>
+
+      <button class="nav-btn" data-tab="tab-mpk">
+        <span class="nav-icon">🚌</span>
+        <span class="nav-label">MPK</span>
+      </button>
+
+      <button class="nav-btn" data-tab="tab-waste">
+        <span class="nav-icon">🚛</span>
+        <span class="nav-label">Śmieci</span>
+      </button>
+
+      <button class="nav-btn" data-tab="tab-contacts">
+        <span class="nav-icon">❄️</span>
+        <span class="nav-label">SOS / Zima</span>
+      </button>
+
+      <button class="nav-btn" data-tab="tab-culture">
+        <span class="nav-icon">🏛️</span>
+        <span class="nav-label">Wieś</span>
+      </button>
+    </nav>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- MODAL: WYBÓR ULUBIONEGO PRZYSTANKU             -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="modal-fav-stop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">Wybierz przystanek na Pulpit</div>
+        <button class="modal-close" id="modal-fav-close">&times;</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        Wybierz przystanek i kierunek, który chcesz widzieć bezpośrednio na ekranie głównym aplikacji:
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">Linia autobusowa:</label>
+        <select id="modal-fav-line" class="custom-select">
+          <option value="215">Linia 215 (Borek Fałęcki ⇄ Rzeszotary)</option>
+          <option value="225">Linia 225 (Borek Fałęcki ⇄ Świątniki Górne)</option>
+          <option value="915">Linia 915 (Nocna: Łagiewniki ⇄ Świątniki)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Przystanek we Wrząsowicach:</label>
+        <select id="modal-fav-stop-select" class="custom-select"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kierunek jazdy:</label>
+        <select id="modal-fav-dir" class="custom-select"></select>
+      </div>
+
+      <button class="btn-primary" id="btn-save-fav-stop" style="margin-top: 10px;">
+        Zapisz na ekranie głównym
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- MODAL: EDYCJA HARMONOGRAMU ŚMIECI              -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="modal-edit-waste">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">Dostosuj terminy wywozu</div>
+        <button class="modal-close" id="modal-waste-close">&times;</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+        Jeśli gmina zmieniła harmonogram lub chcesz wprowadzić własne daty, możesz je edytować poniżej (format YYYY-MM-DD):
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">Daty odbioru (format JSON):</label>
+        <textarea id="waste-json-textarea" style="width: 100%; height: 200px; font-family: monospace; font-size: 12px; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-primary" id="btn-save-waste-json">Zapisz zmiany</button>
+        <button class="header-btn" id="btn-reset-waste-json" style="padding: 12px;">Resetuj do oficjalnych</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- MODAL: INSTRUKCJA INSTALACJI PWA               -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="modal-install-guide">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">Instalacja aplikacji na telefonie</div>
+        <button class="modal-close" id="modal-install-close">&times;</button>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 44px; margin-bottom: 8px;">📲</div>
+        <h4 style="font-size: 16px; font-weight: 700;">Moje Wrząsowice jako aplikacja</h4>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+          Możesz korzystać z tej strony dokładnie jak z aplikacji z Google Play czy App Store – bez instalowania zbędnych plików.
+        </p>
+      </div>
+
+      <div style="background: #f8fafc; border-radius: 10px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color);">
+        <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px;">Na telefonie z Androidem (Chrome):</div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          1. Kliknij ikonę <b>trzech kropek (⋮)</b> w prawym górnym rogu przeglądarki.<br>
+          2. Wybierz <b>„Zainstaluj aplikację”</b> lub <b>„Dodaj do ekranu głównego”</b>.
+        </div>
+      </div>
+
+      <div style="background: #f8fafc; border-radius: 10px; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border-color);">
+        <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px;">Na telefonie iPhone / iPad (Safari):</div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          1. Kliknij przycisk <b>Udostępnij (kwadrat ze strzałką w górę)</b> na dole ekranu.<br>
+          2. Przewiń w dół i wybierz <b>„Do ekranu początkowego”</b>.
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-install-confirm">Rozumiem</button>
+    </div>
+  </div>
+
+  <!-- SKRYPTY APLIKACJI -->
+  <script src="js/data.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/bus.js"></script>
+  <script src="js/waste.js"></script>
+  <script src="js/outages.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

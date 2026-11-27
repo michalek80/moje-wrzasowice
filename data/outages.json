@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T15:00:00+01:00",
+  "updatedAt": "2026-11-27T08:41:20.594879",
   "town": "Wrząsowice",
   "commune": "Świątniki Górne",
   "power": {
@@ -15,7 +15,7 @@
     "provider": "ZGK Świątniki Górne",
     "status": "OK",
     "headline": "Sieć wodociągowa pracuje normalnie",
-    "message": "Brak przerw w dostawie wody i planowanego płukania sieci we Wrząsowicach. Woda zdatna do spożycia.",
+    "message": "ZGK nie zgłasza przerw w dostawie wody ani planowanego płukania sieci we Wrząsowicach. Woda zdatna do spożycia.",
     "phone": "12 270 40 30",
     "emergencyPhone": "606 720 033",
     "announcements": []
@@ -24,7 +24,7 @@
     "provider": "Polska Spółka Gazownictwa (PSG)",
     "status": "OK",
     "headline": "Dostawy gazu bez zakłóceń",
-    "message": "Brak aktywnych przerw w dostawie gazu i prac na gazociągu w rejonie Wrząsowic.",
+    "message": "Brak zarejestrowanych przerw w dostawie gazu ani prac na gazociągu we Wrząsowicach.",
     "emergencyPhone": "992",
     "outages": []
   }

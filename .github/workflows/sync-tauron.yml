@@ -1,9 +1,10 @@
-ame: Aktualizacja statusu mediów (Prąd, Woda, Gaz)
+name: Aktualizacja statusu mediów (Prąd, Woda, Gaz)
+
 on:
   schedule:
-    # Uruchamiaj automatycznie co 6 godzin
     - cron: '0 */6 * * *'
   workflow_dispatch:
+
 jobs:
   update-outages:
     runs-on: ubuntu-latest
@@ -12,12 +13,15 @@ jobs:
     steps:
       - name: Pobierz repozytorium
         uses: actions/checkout@v4
+
       - name: Skonfiguruj Pythona
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Pobierz dane o mediach (Prąd, Woda, Gaz)
         run: python scripts/fetch_utilities.py
+
       - name: Zapisz zmiany w repozytorium
         run: |
           git config --global user.name "github-actions[bot]"

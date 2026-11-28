@@ -24,7 +24,7 @@ const APP_CONFIG = {
 // === MPK_DATA_START ===
 const MPK_DATA = {
   "gtfsVersion": "20261126_20261128",
-  "gtfsSyncedAt": "2026-11-27",
+  "gtfsSyncedAt": "2026-11-28",
   "lines": {
     "215": {
       "number": "215",
